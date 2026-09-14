@@ -1,0 +1,6 @@
+- separately stored storage medium metadata
+- separately stored contents metadata
+- scheduled disk writes from mem to metadata files, also that same operation when the program force quits
+- safe LAN network access (using tokenization and password hashing with argon2id or other algorithm)
+- strict non-default remote access
+- concurrent disk writes using GPU
