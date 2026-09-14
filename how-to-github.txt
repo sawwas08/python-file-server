@@ -1,0 +1,21 @@
+GIT COMMANDS:
+
+
+MULTI STAGING FILE UPLOAD PROCESS:
+
+1. STAGING:	Staging a file is a command line action that tells your local git executable to add a file to a commit que. [USE THIS FEATURE TO QUICKLY ADD FILES TO A REPOSITORY UPLOAD QUE FOR LATER]
+2. COMMITTING:	Committing is when you tell your local git executable to compile the currently staged changes into one big change called a commit. A commit is a historical edit of the project and appears in timelines and project statistics and is similar to saving your work. [USE THIS FEATURE TO SHIP THE ENTIRE SET OF STAGED CHANGES AT ONCE]
+3. PUSHING:	Pushing is when you have a commit saved to your local repository clone and you want to send these changes to the online repo. Beware of merge conflicts, more on that below. [USE THIS FEATURE TO SEND LOCAL REPO CHANGES TO THE ONLINE REPO] 
+
+MERGE CONFLICTS:
+
+When two project members attempt to push their commits simultaneously, you might expect their code could be incompatible. Neither Git nor Github automatically reads and fixes code, it allows the first commit to pass and forces the second member to first pull commit one to their local repository, then manually check that files are compatible. if both commits change the same file, git will read the file and insert markers where lines were modified, inserted, or deleted.
+
+### COMMANDS: (any examples with asterisks are to have their asterisks removed on substitution/replacement)
+
+DOWNLOAD A FULL COPY OF THE ONLINE REPO TO YOUR PC
+git clone *url* *filepath destination*
+
+STAGE FILES TO A COMMIT
+stage all files in the project directory at once: git add .
+stage selected file: git add *filepath from current working directory*
