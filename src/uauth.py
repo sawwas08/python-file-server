@@ -1,0 +1,1 @@
+#functions here will be used to verify the identity of users based on password hashes and tokens. TODO: JWTs and hash algorithm, as well as database interface

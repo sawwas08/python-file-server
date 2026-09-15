@@ -9,4 +9,3 @@ src/web - the directory where all webpage(html) files and web server related cod
 environment variables - files that end in .env are a coding language ambiguous file format for specifying global program variables. the env files are where secret hash keys and other configurable/non-hardcoded data is stored
 
 entry point - in most programming languages the entry point is a function or method named main. the python runtime compiles code into the raw assembly namespace, meaning you can also start your program with __main__ or other asm hooks. moreover, everything you write in a program begins at main(), and so it makes control flow tracing easy when you start from an aptly named main file containing the main entry point.
-
