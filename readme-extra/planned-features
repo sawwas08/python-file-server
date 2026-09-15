@@ -4,6 +4,4 @@
 - safe LAN network access (using tokenization and password hashing with argon2id or other algorithm)
 - strict non-default remote access
 - concurrent disk writes using GPU
--t4st
-
--test modified
+- html webpages for simple/secure viewing and moving of files

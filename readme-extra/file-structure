@@ -1,0 +1,12 @@
+PROJECT FILE STRUCTURE:
+
+src - the directory that contains all of the code we write, aka the source code. 
+libs - the directory that contains all external code packages, including .py files and PyPI libraries
+readme-extra - im weird and I like to keep my root dir clean because it looks nice so any project notes for members and instructors to read will go in here. readme.md has to be in root though.
+docs - the directory where detailed plaintext documentation is stored. use this directory as a library to look up specific details about the code, as well as a fresh user guide for the repository contents. it should be a functional index for programmers who want to quickly dive into the codebase/project
+src/web - the directory where all webpage(html) files and web server related code will run including routes, middleware, authentication, etc will go.
+
+environment variables - files that end in .env are a coding language ambiguous file format for specifying global program variables. the env files are where secret hash keys and other configurable/non-hardcoded data is stored
+
+entry point - in most programming languages the entry point is a function or method named main. the python runtime compiles code into the raw assembly namespace, meaning you can also start your program with __main__ or other asm hooks. moreover, everything you write in a program begins at main(), and so it makes control flow tracing easy when you start from an aptly named main file containing the main entry point.
+

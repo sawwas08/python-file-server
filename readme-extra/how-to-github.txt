@@ -17,5 +17,15 @@ DOWNLOAD A FULL COPY OF THE ONLINE REPO TO YOUR PC
 git clone *url* *filepath destination*
 
 STAGE FILES TO A COMMIT
-stage all files in the project directory at once: git add .
-stage selected file: git add *filepath from current working directory*
+stage all files in the project directory at once:   git add .
+stage selected file:                                git add *filepath from current working directory*
+
+CREATE A COMMIT
+plain commit:           git commit
+commit with message:    git commit -m "*message here*" NOTE: dont forget quotes
+
+PUSH CHANGES TO PUBLIC REPO
+git push
+
+PULL LATEST CHANGES
+git pull

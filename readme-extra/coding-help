@@ -1,0 +1,9 @@
+MEMORY MANAGEMENT:
+every program lives in files on the disk until it is executed. execution of a program means loading it into memory, which consists of copying bytecode and reserving memory space for mutable variables.
+there are four memory segments in a typical program architecture: text, data, stack, and heap. the text and data segments are for code and fixed size variables respectively. The stack and heap are the only segments that have a dynamic memory size, and they grow towards each other from both directions of memory addresses such that an address space can be represented by a linear number line. When you create a variable in global space (outside of a function), it will be static sized and efficiently packed in the data segment. if a fixed size variable is created inside of a function or code body, it will live inside the stack. if a variable has an unknown or fluctuating size it can be placed in the heap for long term storage in the program. because python is an abstract language and has memory management built in, you do not need to worry about lifetimes and garbage collection of unnecessary/leftover heap variables.
+
+as such, it is best practice to carefully place variables so the heap doesn't overflow(then the program will consume more ram) and so the data segment is sufficiently utilized.
+
+the data segment is good for variables that will be used in many places across different execution traces. aka the reliable storage box that always fits perfectly in the corner.
+the stack is for temporary variables that only exist until the function they are created in returns and they are destroyed. 
+the heap is for
