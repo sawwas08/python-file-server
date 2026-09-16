@@ -9,5 +9,4 @@ def initDbFiles():
     
     connection = sqlite3.connect(dbFile)    # open connection with file. if file is not present it creates one.
     connection.close()                      # close connection with file to not waste system resources and block code execution from db
-    
-    print(f" successfully created at: {dbFile}")  
+    print(f"successfully created at: {dbFile}")

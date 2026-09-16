@@ -6,6 +6,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 from dotenv import dotenv_values
 
+myvariable = None
+
 def main():
     print("Main called")
     retrieveEnv()
