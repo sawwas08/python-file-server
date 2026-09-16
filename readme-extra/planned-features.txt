@@ -5,3 +5,4 @@
 - strict non-default remote access
 - concurrent disk writes using GPU
 - html webpages for simple/secure viewing and moving of files
+- secure drive partitions/sections for multiple users to have private data. keys to private sections will be stored in sqlite db

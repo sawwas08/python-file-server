@@ -1,22 +1,25 @@
+# main.py: entry point file
+import os
+import globals
+from controllers import sqlite
 from pathlib import Path
-
-
-dir_path = Path("../data/")
-dir_path.mkdir(parents=True, exist_ok=True)
+from dotenv import load_dotenv
+from dotenv import dotenv_values
 
 def main():
-    print("MAIN CALLED")
+    print("Main called")
     retrieveEnv()
-    initFileSystem()
+    sqlite.initDbFiles()
     return
 
-def retrieveEnv():
+def retrieveEnv(): # load environment vars from .env to globals.py [MIGHT MOVE TO ENV CONTROLLER PY FILE]
+    load_dotenv()
+    globals.DATA_ROOT_PATH = os.getenv('DATA_ROOT_PATH')
     print("retrieving env")
     return
 
-def initFileSystem():
+def initFileSystem(): # call all functions in subdirectories for filesystem setup of a working instance
     print("initializing filesystem")
     return
 
-#python is weird and doesnt automatically call entry point, so main gets called here after everything is defined
-main()
+main() #python is weird and doesnt automatically call entry point, so main gets called here after everything is defined 

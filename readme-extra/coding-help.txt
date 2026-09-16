@@ -10,3 +10,8 @@ the heap is for
 
 EXECUTION FLOW: [IMPORTANT]
 in a program execution is known to have a 'flow', which follows functions and goes through condtional branches to reach other unpredetermined function paths. to keep control flow simple and make debugging easy, this program will have a loose REST API structure. there will be code files that directly manage resources, logical semantics files that reference those low level resource files, and a third branch of files that interfaces with the entry point to establish 3 levels of abstraction. the point of this is to ensure that "database.py" doesnt include functions from "auth.py". if that were the case, auth.py may be refactored or changed, and we wouldnt know which code-level of the program would have the broken link. the second layer is for code files that use the first layer files to perform an action. for example seeding a user into the database would have a second-level file "user.py", containing the function "def seedusers()" which would reference contents from both database.py and auth.py in one place
+
+RETRIEVING .ENV VALUES EXAMPLE:
+DATA_ROOT_PATH = os.getenv('DATA_ROOT_PATH')
+where .env format looks like
+DATA_ROOT_PATH="/data"

@@ -1,0 +1,1 @@
+# the scripts folder is for files that can be called instead of main, simply executing the functions create the db and exiting the program

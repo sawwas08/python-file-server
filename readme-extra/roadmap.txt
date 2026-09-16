@@ -1,3 +1,5 @@
 milestone 1 (functional file saving):
 - save files from mem to disk with code
 - recognize and manage/configure external storage devices
+- generate and handle sqlite metadata files for indexing of contents
+
