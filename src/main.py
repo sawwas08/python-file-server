@@ -13,6 +13,7 @@ def main():
     print("Main called")
     env.loadEnv()
     sqlite.initDbFiles()
+    print("\033[32mProcess Exited.\033[0m")
     return
 
 def initFileSystem(): # call all functions in subdirectories for filesystem setup of a working instance

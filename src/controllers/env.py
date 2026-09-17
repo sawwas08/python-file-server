@@ -9,11 +9,13 @@ from pathlib import Path
 current_dir = Path(__file__).resolve().parent; root_dir = current_dir.parent.parent
 if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
-from src import globals
+import globals
 
 def loadEnv():
     load_dotenv()
-    rootDir = Path(__file__).resolve().parent.parent.parent
-    globals.PATH_SQLITE3_DB = rootDir / os.getenv('PATH_SQLITE3_DB')    # path extension from env
+    rootDir = Path(__file__).resolve().parent.parent.parent     # get path of root for building other paths at beginning of main function
+    globals.PATH_DBDIR = rootDir / os.getenv('PATH_DBDIR')              # path extension from env
+    globals.PATH_MAIN_DB = rootDir / os.getenv('PATH_MAIN_DB')          # path extension from env
     globals.PATH_INDEX_DB = rootDir / os.getenv('PATH_INDEX_DB')        # path extension from env
     globals.PATH_USER_DB = rootDir / os.getenv('PATH_USER_DB')          # path extension from env
+
