@@ -13,3 +13,6 @@
 - robust user authentication with JWT tokens and password hashing
 - 3-stage multilevel codebase for easier stack tracing/debugging
 - robust support for scalability
+
+### USAGE:
+To set up this project, copy the main branch to a directory on your system. You will need to change the secrets in the .env file so your database is less likely to be datamined.
