@@ -18,13 +18,15 @@ def initDbFiles():
     globals.PATH_INDEX_DB = globals.PATH_SQLITE3_DB / "fs-index.sqlite3"              # append the filename to the location of the db file to complete its full path
 
     #check if files exist, and try to not overwrite them
-    if globals.PATH_INDEX_DB.is_file() and globals.PATH_INDEX_DB.is_file():
+    if globals.PATH_USER_DB.is_file() or globals.PATH_INDEX_DB.is_file():
         overwrite = input("The file exists, are you sure you want to reset them??? (Y/N):\n")
         if overwrite.casefold() == "n".casefold() or overwrite.casefold == "no".casefold():
             # end the execution of initDbFiles() so the dbs dont get erased
             print(f"Avoided overwriting files: {globals.PATH_INDEX_DB, globals.PATH_USER_DB}"); return  
 
     #if all other control flow blocks fail finally overwrite/create files
+    globals.PATH_USER_DB.unlink(missing_ok=True)
+    globals.PATH_INDEX_DB.unlink(missing_ok=True)
     globals.PATH_SQLITE3_DB.mkdir(parents=True, exist_ok=True)  # if its not already existing, create the data/ dir
     connection = sqlite3.connect(globals.PATH_USER_DB)          # open connection with file. if file is not present it creates one.
     connection.close()                                          # connection with file is not needed in this case
