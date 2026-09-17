@@ -1,0 +1,19 @@
+# PURPOSE: load env data into globals.py
+import sqlite3
+import os
+from dotenv import load_dotenv
+
+#snippet to up the module scanning root
+import sys
+from pathlib import Path
+current_dir = Path(__file__).resolve().parent; root_dir = current_dir.parent.parent
+if str(root_dir) not in sys.path:
+    sys.path.insert(0, str(root_dir))
+from src import globals
+
+def loadEnv():
+    load_dotenv()
+    rootDir = Path(__file__).resolve().parent.parent.parent
+    globals.PATH_SQLITE3_DB = rootDir / os.getenv('PATH_SQLITE3_DB')    # path extension from env
+    globals.PATH_INDEX_DB = rootDir / os.getenv('PATH_INDEX_DB')        # path extension from env
+    globals.PATH_USER_DB = rootDir / os.getenv('PATH_USER_DB')          # path extension from env

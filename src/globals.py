@@ -3,6 +3,9 @@
 # Forward declare the existence of this variable so it's lifetime is always tied to this location forever
 PASSWORD_HASH_SECRET = None
 JWT_SECRET = None
-DATA_ROOT_PATH = None 
+
+PATH_SQLITE3_DB = None
+PATH_USER_DB = None
+PATH_INDEX_DB = None
 
 CONNECTED_DRIVES = []
