@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 # SNIPPET: set max import path resolution one directory higher
 import sys
@@ -8,9 +9,11 @@ if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 import globals
 
-connectedDrives = os.listdrives()
-globals.CONNECTED_DRIVES = connectedDrives
-print(globals.CONNECTED_DRIVES)
+def getConnectedDrives(): # put the code into a function so it can be ran from main()
+    connectedDrives = os.listdrives()
+    for drive in connectedDrives: # instead of overwriting global value, clear and rewrite the new detected drives into global var as a pathlib Path object ("C://" -> WindowsPath('C:/'))
+        globals.CONNECTED_DRIVES.clear()
+        globals.CONNECTED_DRIVES.append(Path(drive))
 
 #TODO:
 # detect disks function: use python to detect all available disk drives and add their handles (paths or id or something useful) to globals
@@ -25,3 +28,6 @@ print(globals.CONNECTED_DRIVES)
 # store file function [start basic]: move a single file into a storage disk. this should require a parameter that determines which drive id the file lands in. the function should also interface with sqlite.py to create a file entry and track its location, permissions, and properties.
 
 # transaction worker [advanced]: spawn a separate thread to execute drives.py functions from a task que (UNSAFE TO EXECUTE RAW FUNCTIONS, PASS TOKENIZED AND SANITIZED JOBS ONLY) 
+
+# resize partition function: given a function parameter for size and partition id/handle, change the size of the given partition
+

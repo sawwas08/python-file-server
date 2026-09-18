@@ -1,0 +1,5 @@
+TABLE users:
+    str username
+    str passwhash
+
+TABLE partitions:

@@ -3,6 +3,8 @@ import os
 import globals
 from controllers import env
 from controllers import sqlite
+from controllers import drives
+from services import indexing
 from pathlib import Path
 from dotenv import load_dotenv
 from dotenv import dotenv_values
@@ -12,7 +14,11 @@ myvariable = None
 def main():
     print("Main called")
     env.loadEnv()
-    sqlite.initDbFiles()
+    sqlite.createFile()
+    drives.getConnectedDrives()
+    print(globals.CONNECTED_DRIVES)
+    indexing.initDbTables()
+
     print("\033[32mProcess Exited.\033[0m")
     return
 

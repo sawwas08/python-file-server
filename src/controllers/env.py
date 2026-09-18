@@ -18,4 +18,3 @@ def loadEnv():
     globals.PATH_MAIN_DB = rootDir / os.getenv('PATH_MAIN_DB')          # path extension from env
     globals.PATH_INDEX_DB = rootDir / os.getenv('PATH_INDEX_DB')        # path extension from env
     globals.PATH_USER_DB = rootDir / os.getenv('PATH_USER_DB')          # path extension from env
-
