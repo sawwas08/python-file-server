@@ -12,14 +12,7 @@ if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 import globals
 
-#import globals
-
-class SqliteTypes(Enum): # create a data type to enforce that DbColumn has one of the few valid type IDs for sqlite
-    Null = "NULL"
-    Int = "INTEGER"
-    Float = "REAL"
-    String = "TEXT"
-    Blob = "BLOB"
+from globals import SqliteTypes
 
 @dataclass # create a combined data structure to pass as compact parameters. (dataclass means this class is strictly a type definition for static data, not executable code)
 class DbColumn:
@@ -49,14 +42,37 @@ def createFile():
 def createTable(dbFile: Path, tableName: str):
     connection = sqlite3.connect(dbFile)    # get a handle to the database
     cursor = connection.cursor()            # create a pythono cursor object (not the ai one) to operate on the database    
-    create_table_query = f"""               
-    CREATE TABLE IF NOT EXISTS {tableName} (
-        id INTEGER PRIMARY KEY
-    );"""
+    create_table_query = f"""CREATE TABLE IF NOT EXISTS {tableName} (id INTEGER PRIMARY KEY);"""
     cursor.execute(create_table_query)
     connection.commit()
     connection.close()
 
-# FUNCTION create table: creates a table in the sql database
+def createManyToManyJoinTable(dbFile: Path, tableOne: str, tableTwo: str):
+    tableName = tableOne + "_" + tableTwo   #name of join table is t1_t2
+    idOne = tableOne + "_id"; idTwo = tableTwo + "_id"
+    connection = sqlite3.connect(dbFile)    # get a handle to the database
+    cursor = connection.cursor()            # create a pythono cursor object (not the ai one) to operate on the database    
+    create_table_query = f"""CREATE TABLE IF NOT EXISTS {tableName} (
+        {idOne} INTEGER, 
+        {idTwo} INTEGER, 
+        PRIMARY KEY ({idOne}, {idTwo}), 
+        FOREIGN KEY ({idOne}) REFERENCES {tableOne}(id) ON DELETE CASCADE,
+        FOREIGN KEY ({idTwo}) REFERENCES {tableTwo}(id) ON DELETE CASCADE);"""
+    cursor.execute(create_table_query)
+    connection.commit()
+    connection.close()
 
-# FUNCTION 
+def insertColumn(dbFile: Path, tableName: str, columnName: str, columnType: SqliteTypes): # NOTE: SqliteTypes is an ENUM CLASS, which constrains valid inputs for this variable to the enumerated values in sqlitetypes
+    connection = sqlite3.connect(dbFile)    # get a handle to the database
+    cursor = connection.cursor()            # create a pythono cursor object (not the ai one) to operate on the database    
+    
+    cursor.execute(f"PRAGMA table_info({tableName});")  # PRAGMA sql command reads all data into python memory to check if the column exists
+    columns = [row[1] for row in cursor.fetchall()]     # index 1 contains the column name
+    if columnName not in columns:
+        # hardcode sql command into string
+        create_column_query = f"""ALTER TABLE {tableName} ADD COLUMN {columnName} {columnType.value};"""
+        cursor.execute(create_column_query)
+        connection.commit()
+    else:
+        print(f"\x1b[4m{columnName}\x1b[0m column already exists in table \x1b[4m{tableName}\x1b[0m at file:\n{dbFile}\n\033[33mSKIPPING COLUMN INSERTION\033[0m")
+    connection.close()
