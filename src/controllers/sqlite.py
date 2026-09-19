@@ -21,6 +21,7 @@ class DbColumn:
 
 def createFile():
     globals.PATH_DBDIR.mkdir(parents=True, exist_ok=True)   # make the root/data dir
+    bufferDir = globals.PATH_DBDIR / "storage-buffer/"; bufferDir.mkdir(parents=True, exist_ok=True)
     temp = [globals.PATH_MAIN_DB]                           # create iterative list for iteration of sql file restoration
     for path in temp:                                       # perform iteration (path is a variable name that accesses the contents of temp[current loop index])
         if path.is_file():
@@ -76,3 +77,9 @@ def insertColumn(dbFile: Path, tableName: str, columnName: str, columnType: Sqli
     else:
         print(f"\x1b[4m{columnName}\x1b[0m column already exists in table \x1b[4m{tableName}\x1b[0m at file:\n{dbFile}\n\033[33mSKIPPING COLUMN INSERTION\033[0m")
     connection.close()
+
+def func(param1, param2):
+    print(param1)
+    print(param2)
+
+func("hello", "world")
