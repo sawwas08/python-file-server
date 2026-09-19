@@ -25,4 +25,3 @@ def initDbTables():
     #setup users_partitions
     #sqlite.insertForeignKey(globals.PATH_MAIN_DB, "users_partitions", )
 
-# FUNC create 

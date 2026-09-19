@@ -1,6 +1,7 @@
 # main.py: entry point file
 import os
 import globals
+from services import asynchronous
 from controllers import env
 from controllers import sqlite
 from controllers import drives
@@ -22,6 +23,11 @@ def main():
     #print(globals.CONNECTED_DRIVES)
     
     #windows.createPartition()
+    windows.createElevatedPython()
+
+    #asynchronous.startElevatedWorker()
+    #asynchronous.pushtasks()
+    #asynchronous.killElevatedWorker()
 
     print("\033[32mProcess Exited.\033[0m")
     return

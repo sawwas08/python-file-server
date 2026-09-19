@@ -14,6 +14,7 @@ import globals
 def loadEnv():
     load_dotenv()
     rootDir = Path(__file__).resolve().parent.parent.parent     # get path of root for building other paths at beginning of main function
+    globals.PATH_ROOT = rootDir
     globals.PATH_DBDIR = rootDir / os.getenv('PATH_DBDIR')              # path extension from env
     globals.PATH_MAIN_DB = rootDir / os.getenv('PATH_MAIN_DB')          # path extension from env
     globals.PATH_INDEX_DB = rootDir / os.getenv('PATH_INDEX_DB')        # path extension from env
