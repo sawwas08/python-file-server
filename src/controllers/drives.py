@@ -4,7 +4,7 @@ from pathlib import Path
 # SNIPPET: set max import path resolution one directory higher
 import sys
 from pathlib import Path
-current_dir = Path(__file__).resolve().parent; root_dir = current_dir.parent.parent
+current_dir = Path(__file__).resolve().parent; root_dir = current_dir.parent
 if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 import globals
