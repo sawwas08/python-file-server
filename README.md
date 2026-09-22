@@ -3,7 +3,7 @@
 
 ### This server implements a sqlite/ext4 hybrid database, allowing for quick file access and smart semantic file indexing.
 ### Planned features:
-- multi-user support including a permissions system 
+- multi-user support including a permissions system
 - content-addressed-storage via sqlite metadata table
 - web frontend
 - full asynchronous cli support

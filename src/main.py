@@ -23,7 +23,18 @@ def main():
     #print(globals.CONNECTED_DRIVES)
     
     #windows.createPartition()
-    windows.createElevatedPython()
+    #windows.restartAsElevated()
+    
+    windows.createPartitionHelperProcess()
+    for i in range(5):
+        inputfsdfsdf = input("press enter for a new win32 messagebox from foreign process")
+        windows.pipe_json(globals.PROC_ELEVATED_PY, {"signal": "msgbox"})
+    
+    sdhfjkhk = input("press enter once more to send close command to foreign process")
+    windows.pipe_json(globals.PROC_ELEVATED_PY, {"signal": "close"})
+
+    finish = input("press enter to exit main function") # execution on main thread stops here so log can be read until user input is given
+        
 
     #asynchronous.startElevatedWorker()
     #asynchronous.pushtasks()

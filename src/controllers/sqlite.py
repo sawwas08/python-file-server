@@ -77,9 +77,3 @@ def insertColumn(dbFile: Path, tableName: str, columnName: str, columnType: Sqli
     else:
         print(f"\x1b[4m{columnName}\x1b[0m column already exists in table \x1b[4m{tableName}\x1b[0m at file:\n{dbFile}\n\033[33mSKIPPING COLUMN INSERTION\033[0m")
     connection.close()
-
-def func(param1, param2):
-    print(param1)
-    print(param2)
-
-func("hello", "world")

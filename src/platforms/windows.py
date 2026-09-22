@@ -1,14 +1,94 @@
 # windows.py code that only works on windows (aka partitioning)
-
 import subprocess
+import os
 import sys
 import queue
 from pathlib import Path
 import ctypes
 from subprocess import Popen #uncomment line if subprocess import doesnt work
+import time
+import secrets
+from ctypes import wintypes
+import json
+
+kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+shell32 = ctypes.windll.shell32
+
+# SNIPPET: set max import path resolution one directory higher
+import sys
+from pathlib import Path
+current_dir = Path(__file__).resolve().parent.parent; root_dir = current_dir.parent     # NOTE: if you want to increase directory visibility of this file even more, add .parent to the end of the preceding line.
+if str(root_dir) not in sys.path:
+    sys.path.insert(0, str(root_dir))
+import globals
+
+kernel32.ReadFile.argtypes = [
+    wintypes.HANDLE,
+    wintypes.LPVOID,
+    wintypes.DWORD,
+    ctypes.POINTER(wintypes.DWORD),
+    wintypes.LPVOID,
+]
+kernel32.ReadFile.restype = wintypes.BOOL
+
+kernel32.WriteFile.argtypes = [
+    wintypes.HANDLE,
+    wintypes.LPCVOID,
+    wintypes.DWORD,
+    ctypes.POINTER(wintypes.DWORD),
+    wintypes.LPVOID,
+]
+
+kernel32.WriteFile.restype = wintypes.BOOL
+
+def pipe_json(handle, message=None, buffer_size=64 * 1024): # second two params may be omitted, setting message as none performs a message read instead of write
+    #check for bad handle
+    
+    # ---- Write ----
+    if message is not None:
+        data = json.dumps(message, separators=(",", ":")).encode("utf-8")
+        written = wintypes.DWORD()
+        ok = kernel32.WriteFile( handle, data, len(data), ctypes.byref(written), None )
+
+        if not ok:
+            raise ctypes.WinError(ctypes.get_last_error())
+
+        if written.value != len(data): # handle buffer overflows
+            raise RuntimeError( f"Partial pipe write: {written.value}/{len(data)} bytes" )
+
+    # ---- Read ----
+    buffer = ctypes.create_string_buffer(buffer_size)
+    read = wintypes.DWORD()
+    ok = kernel32.ReadFile( handle, buffer, buffer_size, ctypes.byref(read), None )
+
+    if not ok:
+        error = ctypes.get_last_error() 
+        if error == 234:  # win32 int ERROR_MORE_DATA: message was larger than read str buffer.
+            chunks = [buffer.raw[:read.value]]
+
+            while True: # when data is too big for buffer, read multiple times until buffer is constructed
+                buffer = ctypes.create_string_buffer(buffer_size)
+                read = wintypes.DWORD()
+                ok = kernel32.ReadFile( handle, buffer, buffer_size, ctypes.byref(read), None )
+                chunks.append(buffer.raw[:read.value])
+                if ok:      
+                    break
+                error = ctypes.get_last_error()
+                if error != 234:
+                    raise ctypes.WinError(error)
+            data = b"".join(chunks)
+
+        else:
+            raise ctypes.WinError(error) # likely foreign process has closed pipe
+    else:
+        data = buffer.raw[:read.value]
+
+    return json.loads(data.decode("utf-8"))
 
 cwd = Path(__file__).resolve().parent
 scriptCreatePartition = cwd / "create-partition-windows.bat"
+
+ATTACH_PARENT_PROCESS = -1
 
 def testSubprocessRun(): # run an error
     arg1 = "hello"; arg2 = "world"
@@ -21,39 +101,11 @@ def testSubprocessRun(): # run an error
         print(f"ERROR in create-partition-windows.bat at:\n{cwd}")
     out = result.stdout.strip()
 
-def createPartition(): #letter: str, sizeGb: float, 
+def isAdmin():
     try:
-        p = subprocess.run(
-            ["diskpart", "/s", "commands.txt"],
-            capture_output=True, #python settings for console / data involved
-            text=True,
-            creationflags=subprocess.CREATE_NO_WINDOW # no terminal visible
-        )
-        if result.returncode != 0: # to make a return code in bat use EXIT /B 1 where 1 is numeric code
-            print(f"ERROR in create-partition-windows.bat at:\n{cwd}")
-        out = result.stdout.strip()
-        print(out)
-    except WindowsError as e:
-        print(e)
-        print("Try running the server again with admin!")
-
-def createElevatedPython():
-    print("createpython")
-    globals.PROC_ELEVATED_PY = subprocess.Popen(
-        ['python', 'win-elevated.py'],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True  # Treats streams as text/strings instead of bytes
-    )
-    #process.stdin.write("Hello from Parent\n")
-    #process.stdin.flush() 
-    #response = process.stdout.readline().strip()
-    #print(f"[Parent] Received: {response}")
-
-    #process.stdin.close()
-    #process.stdout.close()
-    globals.PROC_ELEVATED_PY.wait()
+        return bool(ctypes.windll.shell32.IsUserAnAdmin())
+    except Exception:
+        return False
 
 def WorkerElevated(taskQueue: queue.Queue): # completely unnecessary DELETE
     print("[Elevated-Worker] Starting thread...")
@@ -77,3 +129,71 @@ def WorkerElevated(taskQueue: queue.Queue): # completely unnecessary DELETE
         finally:
             # Always mark the task as done
             taskQueue.task_done()
+
+def startRemoteAdmin():
+    try:
+        pythonExe = sys.executable # get handle/path/something to the current working python runtime
+        scriptPath = globals.PATH_ROOT / "src/platforms/win-elevated.py"
+        pipeId = globals.SECRET_PIPEID_WINADMINPROC; pipeName = rf"\\.\pipe\MyApp-{pipeId}" # use generated identifier for this particular IPC session.
+        result = ctypes.windll.shell32.ShellExecuteW( None, "runas", pythonExe, f'"{scriptPath}" "{pipeName}"', None, 1 )
+        print("Started elevated helper. pipeName: ", pipeName)    
+    except WindowsError as e:
+        print(e); print("Error occurred remotely starting elevated helper procress")
+
+###################################################
+
+GENERIC_READ  = 0x80000000
+GENERIC_WRITE = 0x40000000
+OPEN_EXISTING  = 3
+
+INVALID_HANDLE_VALUE = ctypes.c_void_p(-1).value
+
+kernel32.CreateFileW.argtypes = [
+    wintypes.LPCWSTR,   # lpFileName
+    wintypes.DWORD,     # dwDesiredAccess
+    wintypes.DWORD,     # dwShareMode
+    ctypes.c_void_p,    # lpSecurityAttributes
+    wintypes.DWORD,     # dwCreationDisposition
+    wintypes.DWORD,     # dwFlagsAndAttributes
+    wintypes.HANDLE     # hTemplateFile
+]
+
+kernel32.CreateFileW.restype = wintypes.HANDLE
+
+def connect_pipe(pipe_name): # loop on pipe connection until success or timeout
+    counterVar = 0
+    while True:
+        handle = kernel32.CreateFileW( pipe_name, GENERIC_READ | GENERIC_WRITE, 0, None, OPEN_EXISTING, 0, None )
+        counterVar += 1
+        if handle != INVALID_HANDLE_VALUE: # error check for an invalid pipe handle
+            #raise ctypes.WinError(ctypes.get_last_error())
+            return handle
+        time.sleep(0.1)
+        if counterVar == 100:
+            print("Timed out while waiting for foreign pipe to open, restart server or run without partitioning feature")
+
+def pipeIsConnected(pipeHandle):
+    result = pipe_json(pipeHandle, {"signal": "isconnected"})
+    if result.get("connected") == "1":
+        return True
+
+    return False
+
+def attachPipe():
+    pipe_id = globals.SECRET_PIPEID_WINADMINPROC
+    pipe_name = rf"\\.\pipe\MyApp-{pipe_id}"
+
+    globals.PROC_ELEVATED_PY = connect_pipe(pipe_name) # set win32 handle to the internal pipe number
+
+    print("Connected!"); print("Handle:", globals.PROC_ELEVATED_PY); print("Waiting for status-check...")
+    
+    connected = pipeIsConnected(globals.PROC_ELEVATED_PY)
+    if connected is True:
+        print("Foreign process handshake successful")        
+    else:
+        print("Foreign process returned bad code.")
+        print("Careful, there may be a rogue admin process alive on this device")
+
+def createPartitionHelperProcess():
+    startRemoteAdmin()
+    attachPipe()
