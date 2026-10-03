@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import shutil
 
 # SNIPPET: set max import path resolution one directory higher
 import sys
@@ -8,12 +9,36 @@ current_dir = Path(__file__).resolve().parent; root_dir = current_dir.parent
 if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 import globals
+import sqlite
 
 def getConnectedDrives(): # put the code into a function so it can be ran from main()
     connectedDrives = os.listdrives()
     for drive in connectedDrives: # instead of overwriting global value, clear and rewrite the new detected drives into global var as a pathlib Path object ("C://" -> WindowsPath('C:/'))
         globals.CONNECTED_DRIVES.clear()
         globals.CONNECTED_DRIVES.append(Path(drive))
+
+# defining the move folders
+test1 = Path("E:/python-file-server/src/controllers/testfolder1")
+test2 = Path("E:/python-file-server/src/controllers/testfolder2")    
+
+def moveFile(source, destination): # Making the function to move files and recording information
+    file_name = source.name
+    file_size = source.stat().st_size
+
+    shutil.move(source, destination)
+
+    new_path = destination / file_name
+
+    sqlite.createFile(
+        file_name,
+        str(new_path),
+        file_size
+    )
+
+
+for item in test1.iterdir():
+    if item.is_file():
+        moveFile(item, test2)
 
 #TODO:
 # detect disks function: use python to detect all available disk drives and add their handles (paths or id or something useful) to globals
