@@ -13,6 +13,7 @@ from services import indexing
 from pathlib import Path
 from dotenv import load_dotenv
 from dotenv import dotenv_values
+from platforms import platswitch
 
 def randomfuncusedtobemain():
     env.loadEnv() # populates globals, keep on for debug
@@ -30,10 +31,6 @@ def randomfuncusedtobemain():
     #asynchronous.pushtasks()
     #asynchronous.killElevatedWorker()
     return
-
-def parseArguments():
-    return
-
 
 def startInputHandling(): # 
     os.system('cls' if os.name == 'nt' else 'clear') # clear console for server cli interface
@@ -73,6 +70,10 @@ def startInputHandling(): #
             print(result)
         elif uInput == "init":
             print("TODO: first time init procedure here")
+        elif uInput == "platinit":
+            platswitch.init()
+        elif uInput == "os":
+            print("Current operating system is: ", globals.CURRENT_OS)
         elif uInput == "partitioner":
             windows.createPartitionHelperProcess()
         elif uInput == "killpart":
@@ -83,9 +84,8 @@ def startInputHandling(): #
                 print("Pipe connected")
             else:
                 print("Pipe not connected")
-        # if no commands matched
-        else:
+        else: # if no commands matched
             print("ERROR: command unknown")
     
-def closeProcess():
+def closeProcess(): # function to reaplce contents of uinput exit command. it tracks all sensitive state and handles it before closure
     return # TODO

@@ -22,6 +22,10 @@ if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 import globals
 
+cwd = Path(__file__).resolve().parent
+scriptCreatePartition = cwd / "create-partition-windows.bat"
+
+# region C Definiitions
 kernel32.ReadFile.argtypes = [
     wintypes.HANDLE,
     wintypes.LPVOID,
@@ -39,6 +43,25 @@ kernel32.WriteFile.argtypes = [
 ]
 kernel32.WriteFile.restype = wintypes.BOOL
 
+GENERIC_READ  = 0x80000000
+GENERIC_WRITE = 0x40000000
+OPEN_EXISTING  = 3
+
+INVALID_HANDLE_VALUE = ctypes.c_void_p(-1).value
+
+kernel32.CreateFileW.argtypes = [
+    wintypes.LPCWSTR,   # lpFileName
+    wintypes.DWORD,     # dwDesiredAccess
+    wintypes.DWORD,     # dwShareMode
+    ctypes.c_void_p,    # lpSecurityAttributes
+    wintypes.DWORD,     # dwCreationDisposition
+    wintypes.DWORD,     # dwFlagsAndAttributes
+    wintypes.HANDLE     # hTemplateFile
+]
+kernel32.CreateFileW.restype = wintypes.HANDLE
+ATTACH_PARENT_PROCESS = -1
+# endregion
+#region Pipe Functions
 def pipe_json(handle, message=None, buffer_size=64 * 1024): # second two params may be omitted, setting message as none performs a message read instead of write    
     try:
         # ---- Write ----
@@ -78,10 +101,9 @@ def pipe_json(handle, message=None, buffer_size=64 * 1024): # second two params 
     except Exception as e:
         print("\033[31m", e, "\033[0m")
 
-cwd = Path(__file__).resolve().parent
-scriptCreatePartition = cwd / "create-partition-windows.bat"
-
-ATTACH_PARENT_PROCESS = -1
+# endregion
+###################################################
+# region Internal functions
 
 def testSubprocessRun(): # run an error
     arg1 = "hello"; arg2 = "world"
@@ -100,17 +122,15 @@ def isAdmin():
     except Exception:
         return False
 
-def WorkerElevated(taskQueue: queue.Queue): # completely unnecessary DELETE
+def WorkerElevated(taskQueue: queue.Queue): # completely unnecessary DELETE unless saving for thread stuff
     print("[Elevated-Worker] Starting thread...")
     while True:
         currentTask = taskQueue.get() # get the next queued task
-        
         #check if the task is to shut down worker
         if currentTask is None:
             print("[Elevated-Worker] Terminating thread...")
             taskQueue.task_done()
             break
-
         #proceed to execute code from task
         try:
             if type(currentTask) is str:
@@ -122,25 +142,6 @@ def WorkerElevated(taskQueue: queue.Queue): # completely unnecessary DELETE
         finally:
             # Always mark the task as done
             taskQueue.task_done()
-
-GENERIC_READ  = 0x80000000
-GENERIC_WRITE = 0x40000000
-OPEN_EXISTING  = 3
-
-INVALID_HANDLE_VALUE = ctypes.c_void_p(-1).value
-
-kernel32.CreateFileW.argtypes = [
-    wintypes.LPCWSTR,   # lpFileName
-    wintypes.DWORD,     # dwDesiredAccess
-    wintypes.DWORD,     # dwShareMode
-    ctypes.c_void_p,    # lpSecurityAttributes
-    wintypes.DWORD,     # dwCreationDisposition
-    wintypes.DWORD,     # dwFlagsAndAttributes
-    wintypes.HANDLE     # hTemplateFile
-]
-kernel32.CreateFileW.restype = wintypes.HANDLE
-
-###################################################
 
 def startRemoteAdmin():
     try:
@@ -216,4 +217,13 @@ def tryKillHelper(pipeHandle): # func is named try because the helper is its own
         print("No response, partitioner does not exist or isn't connected")
     elif result["status"] == "0":
         print("helper terminated")
-        
+
+# endregion
+###################################################
+# region Interface
+# the following function signatures should be identical across windows.py, linux.py, and darwin.py
+
+def init():
+    print("platswitch function ran on windows.py")
+    startRemoteAdmin()
+    attachPipe()

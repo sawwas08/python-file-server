@@ -22,7 +22,10 @@ def initSchema(): # call only when database is being setup for the first time
         signup_date TEXT DEFAULT CURRENT_TIMESTAMP
     );
 
-    CREATE TABLE IF NOT EXISTS partitions
+    CREATE TABLE IF NOT EXISTS partitions (
+        if INTEGER PRIMARY_KEY,
+        
+    );
     
     CREATE TABLE IF NOT EXISTS users_partitions (
         {idOne} INTEGER, 

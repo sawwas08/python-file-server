@@ -228,7 +228,6 @@ def pipe_already_exists(pipe_name):
     raise ctypes.WinError(error)
 
 if pipe_already_exists(ARG_PIPENAME):
-    inptsdf = input("exiting")
     sys.exit()
 
 print(f"Creating pipe: {ARG_PIPENAME}"); PIPE_MAIN_PROC = create_pipe(ARG_PIPENAME)
@@ -241,9 +240,9 @@ if not connected: # if error occurs, crash process with error
 print("Connected to pipe successfully, waiting for remote process message...")
 
 firstMessage = pipe_read(PIPE_MAIN_PROC)
-if firstMessage.get("signal") != "isconnected": # parse key from json object
+if firstMessage.get("signal") != "status":
     raise ValueError("Main proc does not communicate success, terminating")
-pipe_write(PIPE_MAIN_PROC, {"connected": "1"}); print("recieved handshake, sending handshake to finish setup")
+pipe_write(PIPE_MAIN_PROC, {"status": "1"}); print("recieved handshake, sending handshake to finish setup")
 
 # main code:
 while True: 
