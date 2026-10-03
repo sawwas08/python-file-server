@@ -1,1 +1,5 @@
 IN THIS FILE PLACE THE DESCRIPTIONS OF ALL NOTEWORTHY FUNCTIONS FOR EASY CODEBASE SEARCH
+
+#inputengine.py
+def init()
+-- A simple function to handle user input in real time.

@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import shutil
 
+
 # SNIPPET: set max import path resolution one directory higher
 import sys
 from pathlib import Path
@@ -9,7 +10,7 @@ current_dir = Path(__file__).resolve().parent; root_dir = current_dir.parent
 if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 import globals
-import sqlite
+from . import sqlite
 
 def getConnectedDrives(): # put the code into a function so it can be ran from main()
     connectedDrives = os.listdrives()
@@ -36,9 +37,9 @@ def moveFile(source, destination): # Making the function to move files and recor
     )
 
 
-for item in test1.iterdir():
-    if item.is_file():
-        moveFile(item, test2)
+    for item in test1.iterdir():
+        if item.is_file():
+            moveFile(item, test2)
 
 #TODO:
 # detect disks function: use python to detect all available disk drives and add their handles (paths or id or something useful) to globals

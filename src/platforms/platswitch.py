@@ -1,0 +1,1 @@
+# when win and lin support are here, this file is a wrapper to define universal functins depending on current platform type

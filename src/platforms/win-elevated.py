@@ -4,6 +4,8 @@ import time
 import ctypes
 from ctypes import wintypes
 import json
+import subprocess
+import shutil
 
 kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
 user32 = ctypes.WinDLL("user32", use_last_error=True)
@@ -17,6 +19,20 @@ ERROR_PIPE_CONNECTED = 535
 INVALID_HANDLE_VALUE = ctypes.c_void_p(-1).value
 ARG_PIPENAME = sys.argv[1]
 
+HANDLE = wintypes.HANDLE
+BOOL = wintypes.BOOL
+DWORD = wintypes.DWORD
+LPVOID = wintypes.LPVOID
+
+kernel32.DisconnectNamedPipe.argtypes = [HANDLE]
+kernel32.DisconnectNamedPipe.restype = BOOL
+
+kernel32.CloseHandle.argtypes = [HANDLE]
+kernel32.CloseHandle.restype = BOOL
+
+kernel32.CancelIoEx.argtypes = [HANDLE, LPVOID]
+kernel32.CancelIoEx.restype = BOOL
+
 class SECURITY_ATTRIBUTES(ctypes.Structure):
     _fields_ = [
         ("nLength", wintypes.DWORD),
@@ -24,13 +40,21 @@ class SECURITY_ATTRIBUTES(ctypes.Structure):
         ("bInheritHandle", wintypes.BOOL),
     ]
 
+kernel32.WaitNamedPipeW.argtypes = [
+    wintypes.LPCWSTR,
+    wintypes.DWORD,
+]
+kernel32.WaitNamedPipeW.restype = wintypes.BOOL
+
+ERROR_FILE_NOT_FOUND = 2
+ERROR_SEM_TIMEOUT = 121
+
 user32.MessageBoxA.argtypes = [
     wintypes.HWND,
     wintypes.LPCSTR,
     wintypes.LPCSTR,
     wintypes.UINT
 ]
-
 user32.MessageBoxA.restype = ctypes.c_int
 
 kernel32.ReadFile.argtypes = [
@@ -49,7 +73,6 @@ kernel32.WriteFile.argtypes = [
     ctypes.POINTER(wintypes.DWORD),
     wintypes.LPVOID,
 ]
-
 kernel32.WriteFile.restype = wintypes.BOOL
 
 kernel32.CreateNamedPipeW.argtypes = [
@@ -193,6 +216,21 @@ def pipe_write(handle, message=None, buffer_size=64 * 1024): # second two params
         if written.value != len(data): # handle buffer overflows
             raise RuntimeError( f"Partial pipe write: {written.value}/{len(data)} bytes" )
 
+def pipe_already_exists(pipe_name):
+    ok = kernel32.WaitNamedPipeW(pipe_name, 0)
+    if ok:
+        return True
+    error = ctypes.get_last_error()
+    if error == ERROR_FILE_NOT_FOUND:
+        return False
+    if error == ERROR_SEM_TIMEOUT:
+        return True
+    raise ctypes.WinError(error)
+
+if pipe_already_exists(ARG_PIPENAME):
+    inptsdf = input("exiting")
+    sys.exit()
+
 print(f"Creating pipe: {ARG_PIPENAME}"); PIPE_MAIN_PROC = create_pipe(ARG_PIPENAME)
 print("Pipe created:", PIPE_MAIN_PROC)
 connected = kernel32.ConnectNamedPipe( PIPE_MAIN_PROC , None ) 
@@ -201,27 +239,43 @@ if not connected: # if error occurs, crash process with error
     if error != ERROR_PIPE_CONNECTED:
         raise ctypes.WinError(error)
 print("Connected to pipe successfully, waiting for remote process message...")
+
 firstMessage = pipe_read(PIPE_MAIN_PROC)
 if firstMessage.get("signal") != "isconnected": # parse key from json object
     raise ValueError("Main proc does not communicate success, terminating")
-pipe_write(PIPE_MAIN_PROC, {"connected": "1"})
-print("recieved handshake, sending handshake to finish setup")
-
-
+pipe_write(PIPE_MAIN_PROC, {"connected": "1"}); print("recieved handshake, sending handshake to finish setup")
 
 # main code:
 while True: 
     result = pipe_read(PIPE_MAIN_PROC)
     print("command recieved: ", result)
-    pipe_write(PIPE_MAIN_PROC, {"status": 0})
 
     if result["signal"] == "msgbox":
         user32.MessageBoxA(
             None,
-            b"Hello from Python!",
-            b"My Application",
+            b"Hello from python",
+            b"win-elevated.py",
             0
         )
+        pipe_write(PIPE_MAIN_PROC, {"status": "0"})
 
+    if result["signal"] == "lstvol":
+        process = subprocess.Popen( ["diskpart"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, )
+        stdout, stderr = process.communicate(input="list volume\n")
+        volumes = [] # parse diskpart output text for drive letters
+        for line in stdout.splitlines():
+            if "Volume" in line and any(char.isdigit() for char in line):
+                parts = line.split()
+                if len(parts) > 1:
+                    if len(parts[2]) == 1:
+                        volumes.append(parts[2]) # cli 3rd word
+        response = {"ltrs": volumes}
+        print(response)
+        pipe_write(PIPE_MAIN_PROC, response)
+
+    if result["signal"] == "status":
+        pipe_write(PIPE_MAIN_PROC, {"status": "1"})
+    
     if result["signal"] == "close": # no matter for this code, the process throws an exception and terminates anyway when it calls pipeing functions on a pipe with no reciever
+        pipe_write(PIPE_MAIN_PROC, {"status": "0"})
         break

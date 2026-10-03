@@ -9,19 +9,46 @@ if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 import globals
 
-def initDbTables(): 
-    # table data is hardcoded here.
-    sqlite.createTable(globals.PATH_MAIN_DB, "users")
-    sqlite.createTable(globals.PATH_MAIN_DB, "files")
-    sqlite.createTable(globals.PATH_MAIN_DB, "partitions") # one to many telationship with files
-    sqlite.createManyToManyJoinTable(globals.PATH_MAIN_DB, "users", "partitions") # join table to relate users and files as a many-to-many relationship
+def initSchema(): # call only when database is being setup for the first time
+    conn = sqlite3.connect(globals.PATH_MAIN_DB)
+    cursor = conn.cursor()
+    cursor.execute("""
+    -- create database schema all at once in one sqlite/cursor call
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        username TEXT NOT NULL UNIQUE,
+        fullname TEXT, -- names are separated by an underscore: LAST_FIRST
+        email TEXT NOT NULL UNIQUE,
+        signup_date TEXT DEFAULT CURRENT_TIMESTAMP
+    );
 
-    #setup users
-    sqlite.insertColumn(globals.PATH_MAIN_DB, "users", "username", SqliteTypes.String)
-    sqlite.insertColumn(globals.PATH_MAIN_DB, "users", "email", SqliteTypes.String)
-    sqlite.insertColumn(globals.PATH_MAIN_DB, "users", "password_hash", SqliteTypes.String)
-    sqlite.insertColumn(globals.PATH_MAIN_DB, "users", "avatar", SqliteTypes.Blob)
+    CREATE TABLE IF NOT EXISTS partitions
+    
+    CREATE TABLE IF NOT EXISTS users_partitions (
+        {idOne} INTEGER, 
+        {idTwo} INTEGER, 
+        PRIMARY KEY ({idOne}, {idTwo}), 
+        FOREIGN KEY ({idOne}) REFERENCES {tableOne}(id) ON DELETE CASCADE,
+        FOREIGN KEY ({idTwo}) REFERENCES {tableTwo}(id) ON DELETE CASCADE);
 
-    #setup users_partitions
-    #sqlite.insertForeignKey(globals.PATH_MAIN_DB, "users_partitions", )
+    CREATE TABLE IF NOT EXISTS files
 
+    """)
+    
+    return
+
+#def initDbTables(): 
+#    # table data is hardcoded here.
+#    sqlite.createTable(globals.PATH_MAIN_DB, "users")
+#    sqlite.createTable(globals.PATH_MAIN_DB, "files")
+#    sqlite.createTable(globals.PATH_MAIN_DB, "partitions") # one to many telationship with files
+#    sqlite.createManyToManyJoinTable(globals.PATH_MAIN_DB, "users", "partitions") # join table to relate users and files as a many-to-many relationship
+#
+#    #setup users
+#    sqlite.insertColumn(globals.PATH_MAIN_DB, "users", "username", SqliteTypes.String)
+#    sqlite.insertColumn(globals.PATH_MAIN_DB, "users", "email", SqliteTypes.String)
+#    sqlite.insertColumn(globals.PATH_MAIN_DB, "users", "password_hash", SqliteTypes.String)
+#    sqlite.insertColumn(globals.PATH_MAIN_DB, "users", "avatar", SqliteTypes.Blob)
+#
+#    #setup users_partitions
+#    #sqlite.insertForeignKey(globals.PATH_MAIN_DB, "users_partitions", )
