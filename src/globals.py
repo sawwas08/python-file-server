@@ -5,6 +5,7 @@ import secrets
 
 # Forward declare the existence of this variable so it's lifetime is always tied to this location forever
 PASSWORD_HASH_SECRET = None
+FILE_KEY_HASH_SECRET = None
 JWT_SECRET = None
 SECRET_PIPEID_WINADMINPROC = secrets.token_hex(16)
 

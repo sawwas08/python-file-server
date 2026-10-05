@@ -65,6 +65,8 @@ def startInputHandling(): #
             break # break from infinite loop, and safely begin program kill procedure
         elif uInput == "help":
             print("TODO: help guide")
+        elif uInput == "initschema":
+            indexing.initSchema()
         elif uInput == "listdrives":
             result = windows.pipe_json(globals.PROC_ELEVATED_PY, {"signal": "lstvol"})
             print(result)

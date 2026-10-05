@@ -15,11 +15,9 @@ from platforms import windows
 
 def main():
     print("Main called")
-    print(globals.CURRENT_OS)
     initSystems()
     inputengine.startInputHandling() # important, this is the main interface for the program at runtime
     print("\033[32mProcess Exited.\033[0m")
-    print(globals.CURRENT_OS)
     return
 
 def initSystems(): # call all functions in subdirectories for filesystem setup of a working instance
