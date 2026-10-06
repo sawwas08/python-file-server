@@ -3,6 +3,7 @@ import sqlite3
 import dotenv
 from enum import Enum
 from dataclasses import dataclass
+from dataclasses import fields
 
 #snippet to up the module scanning root
 import sys
@@ -13,12 +14,15 @@ if str(root_dir) not in sys.path:
 import globals
 
 from globals import SqliteTypes
+from services import indexing
+import schema
 
 @dataclass # create a combined data structure to pass as compact parameters. (dataclass means this class is strictly a type definition for static data, not executable code)
 class DbColumn:
     Name: str
     Type: SqliteTypes
 
+# region DB Initialization
 def createFile():
     globals.PATH_DBDIR.mkdir(parents=True, exist_ok=True)   # make the root/data dir
     bufferDir = globals.PATH_DBDIR / "storage-buffer/"; bufferDir.mkdir(parents=True, exist_ok=True)
@@ -77,3 +81,33 @@ def insertColumn(dbFile: Path, tableName: str, columnName: str, columnType: Sqli
     else:
         print(f"\x1b[4m{columnName}\x1b[0m column already exists in table \x1b[4m{tableName}\x1b[0m at file:\n{dbFile}\n\033[33mSKIPPING COLUMN INSERTION\033[0m")
     connection.close()
+
+# endregion
+
+# region DB Management
+
+def insertRecord(record: schema.SqliteRow):
+    conn = sqlite3.connect(globals.PATH_MAIN_DB)
+    cursor = conn.cursor()
+    
+    tableName = type(record).__name__  # derive the table to insert into from the type name of the record class parameter
+    fieldsDict = {}                     # setup list for each sqlite value to go into database query
+    colNames: list[str] = []
+    values: list[object] = []
+    for f in fields(record):        # place the fields into a key-value pair array
+        fieldsDict[f.name] = getattr(record, f.name)
+        colNames.append(f.name)
+        values.append(getattr(record, f.name))
+    print("SQLITE INSERTION:\n", tableName, "\n", fieldsDict)
+
+    # sqlite command: 
+    placeholders = ", ".join("?" for _ in colNames)
+    command = f"INSERT INTO {tableName} ({', '.join(colNames)}) VALUES ({placeholders})"
+    try:
+        cursor.execute(command, values)
+        conn.commit()
+    except sqlite3.IntegrityError as e: # duplicate entry or constraint failure
+        print(f"Data integrity issue: {e}"); raise
+    except sqlite3.OperationalError as e: # database is locked or full
+        print("Database might be locked or full", e); raise
+# endregion

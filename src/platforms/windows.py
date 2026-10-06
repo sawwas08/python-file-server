@@ -215,8 +215,10 @@ def tryKillHelper(pipeHandle): # func is named try because the helper is its own
     result = pipe_json(pipeHandle, {"signal": "close"})
     if result == None:
         print("No response, partitioner does not exist or isn't connected")
+        globals.BOOL_HELPER_IS_ALIVE = False
     elif result["status"] == "0":
         print("helper terminated")
+        globals.BOOL_HELPER_IS_ALIVE = False
 
 # endregion
 ###################################################

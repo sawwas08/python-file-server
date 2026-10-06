@@ -2,6 +2,7 @@
 import datetime
 import argparse
 import os
+import schema
 import globals
 import inputengine
 from services import asynchronous
@@ -66,7 +67,7 @@ def startInputHandling(): #
         elif uInput == "help":
             print("TODO: help guide")
         elif uInput == "initschema":
-            indexing.initSchema()
+            schema.init()
         elif uInput == "listdrives":
             result = windows.pipe_json(globals.PROC_ELEVATED_PY, {"signal": "lstvol"})
             print(result)
@@ -78,6 +79,9 @@ def startInputHandling(): #
             print("Current operating system is: ", globals.CURRENT_OS)
         elif uInput == "partitioner":
             windows.createPartitionHelperProcess()
+        elif uInput == "test":
+            #sqlite.insertRecord(schema.users("un", "myfullname", "e-mailio"))
+            sqlite.insertRecord(schema.sharedkeys("my_key_text_contents"))
         elif uInput == "killpart":
             windows.tryKillHelper(globals.PROC_ELEVATED_PY)
         elif uInput == "pipestatus":
