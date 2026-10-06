@@ -86,6 +86,41 @@ def insertColumn(dbFile: Path, tableName: str, columnName: str, columnType: Sqli
 
 # region DB Management
 
+def deleteRecordSingle(record: schema.SqliteRow): # the SqliteRow fields are used as conditions for the sql WHERE clause. PROBLEM: null fields can select columns that are null
+    conn = sqlite3.connect(globals.PATH_MAIN_DB)
+    cursor = conn.cursor()
+
+    tableName = type(record).__name__  # derive the table to insert into from the type name of the record class parameter
+    fieldsDict = {}                     # setup list for each sqlite value to go into database query
+    colNames: list[str] = []
+    values: list[object] = []
+    for f in fields(record):        # place the fields into a key-value pair array
+        v = getattr(record, f.name)
+        if v is schema.MISSING:
+            continue
+        fieldsDict[f.name] = getattr(record, f.name)
+        colNames.append(f.name)
+        values.append(v)
+    
+    if not colNames: # safeguard
+        raise ValueError("No fields provided for WHERE clause — refusing to delete everything.")
+    
+    print("SQLITE DELETION:\n", tableName, "\nWHERE: ", fieldsDict)
+
+    whereClause = " AND ".join(f"{c} = ?" for c in colNames)
+    command = f"DELETE FROM {tableName} WHERE {whereClause}"
+
+    try:
+        cursor.execute(command, tuple(values))
+        conn.commit()
+        print("rows deleted:", cursor.rowcount)
+    except sqlite3.IntegrityError as e: # foreign keys may restrict deletion
+        print(f"Data integrity issue: {e}"); raise
+    except sqlite3.OperationalError as e: # database is locked or full
+        print("Database might be locked or full", e); raise
+    except sqlite3.ProgrammingError as e:
+        print("DB query might have mismatching arg count", e); raise
+
 def insertRecord(record: schema.SqliteRow):
     conn = sqlite3.connect(globals.PATH_MAIN_DB)
     cursor = conn.cursor()
@@ -94,13 +129,17 @@ def insertRecord(record: schema.SqliteRow):
     fieldsDict = {}                     # setup list for each sqlite value to go into database query
     colNames: list[str] = []
     values: list[object] = []
-    for f in fields(record):        # place the fields into a key-value pair array
+    
+    for f in fields(record):        # place the fields into a key-value pair array and check for null values
+        if getattr(record, f.name) == None:
+            print("ERROR: cannot create record with null field: ", f.name, " in table: ", tableName)
+            return
         fieldsDict[f.name] = getattr(record, f.name)
         colNames.append(f.name)
         values.append(getattr(record, f.name))
-    print("SQLITE INSERTION:\n", tableName, "\n", fieldsDict)
-
+    
     # sqlite command: 
+    print("SQLITE INSERTION:\n", tableName, "\n", fieldsDict)
     placeholders = ", ".join("?" for _ in colNames)
     command = f"INSERT INTO {tableName} ({', '.join(colNames)}) VALUES ({placeholders})"
     try:
