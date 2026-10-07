@@ -1,0 +1,3 @@
+Puncturable Key Wrapping:
+https://eprint.iacr.org/2022/1209.pdf
+https://ethz.ch/content/dam/ethz/special-interest/infk/inst-infsec/appliedcrypto/education/theses/semester-project_younis-khalil.pdf

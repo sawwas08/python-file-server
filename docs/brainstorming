@@ -1,0 +1,25 @@
+FILE PRIVILEGES: -----------------------------------------
+
+1ST IDEA:
+User-to-file relationships, no cryptography beyond user data and file blobs.
+    Suitable for only a server that is run on trusted hardware.
+    Files cannot be shared unless unencrypted, duplicated, sent to recieving user, then re-encrypted.
+
+2ND IDEA:
+Intermediary db table to hold a file encryption key. has singular foreign user key for owner and array of foreign user keys for read-only data users.
+    Suitable for only a server that is run on trusted hardware.
+    A good first attempt at key granularity, but severe issues in data semantics still preside. 
+    Access revocation is clean and easy.
+
+3RD IDEA:
+Using key cryptography to make shared key table data harder to access. I got very confused here and began to research.
+    Suitable for only a server that is run on trusted hardware.
+    Revocation requires re-encryption of the file data, very messy.
+
+4TH IDEA:
+Envelope encryption with wrapper key puncturing. Sources are in sources.txt.
+"a puncturing algorithm allows the master secret key to be updated such
+that specific wrapped data encryption keys are rendered irrecoverable." - 6.3 Instantiating PFS from PKW and AEAD
+    Safe for non-trusted hardware.
+    Revocation only requires puncturing of the key that another user has.
+    Works great for symmetric key hierarchies, where one key owner individually manages access of many others with their own assigned access keys.
