@@ -16,3 +16,4 @@
 
 ### USAGE:
 To set up this project, copy the main branch to a directory on your system. You will need to change the secrets in the .env file so your database is less likely to be datamined.
+This repository is NOT to be setup on an untrusted server, key management does not yet support remote storage or virtualization.
