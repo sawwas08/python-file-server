@@ -2,15 +2,16 @@
 import datetime
 import argparse
 import os
+import logging
 import schema
 import globals
 import inputengine
-from services import asynchronous
-from controllers import env
-from controllers import sqlite
-from controllers import drives
+from logic import asynchronous
+from backend import env
+from backend import sqlite
+from backend import drives
 from platforms import windows
-from services import indexing
+from logic import indexing
 from pathlib import Path
 from dotenv import load_dotenv
 from dotenv import dotenv_values
@@ -49,14 +50,17 @@ def startInputHandling(): #
         activeFlags.append("verbose")
     if args.debug:
         activeFlags.append("debug")
-    if args.partition:
-        activeFlags.append("partition")
     if args.showhelperconsole:
         activeFlags.append("showhelperconsole"); globals.FLAG_SHOW_HELPER_CONSOLE = 1
+    if args.partition:
+        activeFlags.append("partition")
+        windows.createPartitionHelperProcess()
     if len(activeFlags) > 0:
         print("process started with flags:\n", activeFlags)
     else:
         print("process started with flags:\nNone")
+    
+    env.load_dotenv()
     
     while True: # main user input loop. use caution here.
         uInput = input("\033[32mPY-SERVER > \033[0m")
@@ -80,8 +84,7 @@ def startInputHandling(): #
         elif uInput == "partitioner":
             windows.createPartitionHelperProcess()
         elif uInput == "test":
-            #sqlite.insertRecord(schema.users("un", "myfullname", "e-mailio"))
-            sqlite.insertRecord(schema.sharedkeys("my_key_text_contents"))
+            sqlite.deleteRecordSingle(schema.sharedkeys(id=2))
         elif uInput == "killpart":
             windows.tryKillHelper(globals.PROC_ELEVATED_PY)
         elif uInput == "pipestatus":

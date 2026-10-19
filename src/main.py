@@ -5,11 +5,11 @@ from pathlib import Path
 import os
 import globals
 import inputengine
-from controllers import env
-from controllers import sqlite
-from controllers import drives
-from services import indexing
-from services import asynchronous
+from backend import env
+from backend import sqlite
+from backend import drives
+from logic import indexing
+from logic import asynchronous
 from platforms import platswitch
 from platforms import windows
 

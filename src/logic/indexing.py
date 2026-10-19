@@ -1,6 +1,6 @@
 #this code file is for functions that manage the sql database tables to store and query metadata about the files stored in disks
-from controllers import sqlite
-from controllers.sqlite import SqliteTypes
+from backend import sqlite
+from backend.sqlite import SqliteTypes
 import sqlite3
 from dataclasses import dataclass
 #snippet to up the module scanning root
@@ -10,6 +10,11 @@ current_dir = Path(__file__).resolve().parent; root_dir = current_dir.parent.par
 if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 import globals
+
+def createFileKey():
+    
+
+
 
 #def initDbTables(): 
 #    # table data is hardcoded here.

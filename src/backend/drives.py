@@ -19,8 +19,8 @@ def getConnectedDrives(): # put the code into a function so it can be ran from m
         globals.CONNECTED_DRIVES.append(Path(drive))
 
 # defining the move folders
-test1 = Path("E:/python-file-server/src/controllers/testfolder1")
-test2 = Path("E:/python-file-server/src/controllers/testfolder2")    
+test1 = Path("E:/python-file-server/src/backend/testfolder1")
+test2 = Path("E:/python-file-server/src/backend/testfolder2")    
 
 def moveFile(source, destination): # Making the function to move files and recording information
     file_name = source.name

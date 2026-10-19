@@ -7,47 +7,54 @@ import globals
 # region Schema Structs
 # for constraining sql command wrapper function parameters
 
+# unique object() sentinel: https://python-patterns.guide/python/sentinel-object/
+MISSING = object()
+
 @dataclass
 class SqliteRow:
     pass
 
 @dataclass
 class users(SqliteRow):
-    username: str
-    full_name: str
-    email: str
+    id: int = MISSING
+    username: str = MISSING
+    full_name: str = MISSING
+    email: str = MISSING
 
 @dataclass
 class partitions(SqliteRow):
-    fs_label: str
-    encryption_type: str
-    encryption_key: str
-    capacity: int
-    free_space: int
-    pts: str
-    partition_type: str
-    operating_system: str
+    id: int = MISSING
+    fs_label: str = MISSING
+    encryption_type: str = MISSING
+    encryption_key: str = MISSING
+    capacity: int = MISSING
+    free_space: int = MISSING
+    pts: str = MISSING
+    partition_type: str = MISSING
+    operating_system: str = MISSING
 
 @dataclass
 class files(SqliteRow):
-    name: str
-    size: int
-    is_encrypted: bool
-    key_id: int # foreign key
+    id: int = MISSING
+    name: str = MISSING
+    size: int = MISSING
+    is_encrypted: bool = MISSING
+    key_id: int = MISSING # foreign key
 
 @dataclass
 class sharedkeys(SqliteRow):
-    key_text: str
+    id: int = MISSING
+    key_text: str = MISSING
 
 @dataclass
 class users_sharedkeys(SqliteRow):
-    user_id: int        # foreign key
-    sharedkey_id: int   # foreign key
+    user_id: int = MISSING        # foreign key
+    sharedkey_id: int = MISSING   # foreign key
 
 @dataclass
 class users_partitions(SqliteRow):
-    users_id: str       # foreign key
-    partitions_id: str  # foreign key
+    users_id: str = MISSING       # foreign key
+    partitions_id: str = MISSING  # foreign key
 # endregion
 
 # region Schema

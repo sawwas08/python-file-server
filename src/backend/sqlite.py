@@ -14,7 +14,7 @@ if str(root_dir) not in sys.path:
 import globals
 
 from globals import SqliteTypes
-from services import indexing
+from logic import indexing
 import schema
 
 @dataclass # create a combined data structure to pass as compact parameters. (dataclass means this class is strictly a type definition for static data, not executable code)
@@ -145,6 +145,7 @@ def insertRecord(record: schema.SqliteRow):
     try:
         cursor.execute(command, values)
         conn.commit()
+        print("rows deleted:", cursor.rowcount)
     except sqlite3.IntegrityError as e: # duplicate entry or constraint failure
         print(f"Data integrity issue: {e}"); raise
     except sqlite3.OperationalError as e: # database is locked or full
