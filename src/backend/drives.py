@@ -13,8 +13,8 @@ import globals
 from . import sqlite
 
 def getConnectedDrives(): # put the code into a function so it can be ran from main()
-    connectedDrives = os.listdrives()
-    globals.CONNECTED_DRIVES.clear() #Moved outside the for loop as I think it will only find one drive in each loop not 100% on this though
+    connectedDrives = os.listdrives() # function scoped variable
+    globals.CONNECTED_DRIVES.clear() # clear once before the loop so it populates correctly
     for drive in connectedDrives: # instead of overwriting global value, clear and rewrite the new detected drives into global var as a pathlib Path object ("C://" -> WindowsPath('C:/'))
         globals.CONNECTED_DRIVES.append(Path(drive))
     
@@ -38,9 +38,9 @@ def moveFile(source, destination): # Making the function to move files and recor
     )
 
 
-for item in test1.iterdir():
-    if item.is_file():
-        moveFile(item, test2)
+#for item in test1.iterdir():
+    #if item.is_file():
+        #moveFile(item, test2)
 
 #TODO:
 # detect disks function: use python to detect all available disk drives and add their handles (paths or id or something useful) to globals

@@ -12,7 +12,7 @@ if str(root_dir) not in sys.path:
 import globals
 
 def createFileKey():
-    
+    return
 
 
 
