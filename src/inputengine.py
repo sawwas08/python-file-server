@@ -73,7 +73,8 @@ def startInputHandling(): #
         elif uInput == "initschema":
             schema.init()
         elif uInput == "listdrives":
-            result = windows.pipe_json(globals.PROC_ELEVATED_PY, {"signal": "lstvol"})
+            #result = windows.pipe_json(globals.PROC_ELEVATED_PY, {"signal": "lstvol"})
+            result = drives.getConnectedDrives()
             print(result)
         elif uInput == "init":
             print("TODO: first time init procedure here")
