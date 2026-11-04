@@ -22,8 +22,12 @@ def getConnectedDrives(): # put the code into a function so it can be ran from m
         if labelDir.is_dir() and not any(labelDir.iterdir()):
             print("Drive labels directory is empty")
             return
-        connectedDrives = list(labelDir.iterdir())
-        print(connectedDrives)
+
+        for p in labelDir.iterdir():
+            globals.CONNECTED_DRIVES.append(p)
+
+        #connectedDrives = list(labelDir.iterdir())
+        #print(connectedDrives)
 
 
 def legacySetRepoDir(ntDriveLetter: Path): # path object must be an available drive letter
