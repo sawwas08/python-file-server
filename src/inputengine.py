@@ -70,13 +70,20 @@ def startInputHandling(): #
             break # break from infinite loop, and safely begin program kill procedure
         elif uInput == "help":
             print("TODO: help guide")
+        elif uInput == "setdrive":
+            if globals.CURRENT_OS == "win32":
+                uInput1 = input("Enter drive letter, one character only:\n")
+            elif globals.CURRENT_OS == "linux":
+                uInput = input("Enter linux drive label:\n")
+
+            
         elif uInput == "initschema":
             schema.init()
         elif uInput == "listdrives":
             #result = windows.pipe_json(globals.PROC_ELEVATED_PY, {"signal": "lstvol"})
             drives.getConnectedDrives()
             print(globals.CONNECTED_DRIVES)
-            print(*[obj.name for obj in globals.CONNECTED_DRIVES], ',')
+            print(*[str(obj) for obj in globals.CONNECTED_DRIVES], sep=', ')
         elif uInput == "init":
             print("TODO: first time init procedure here")
         elif uInput == "platinit":

@@ -10,6 +10,9 @@ elif globals.CURRENT_OS == "linux":
     from . import linux as interface
 elif globals.CURRENT_OS == "darwin":
     from . import darwin as interface
+    raise NotImplementedError(f"Operating system {globals.CURRENT_OS} is not supported.")
+else:
+    raise NotImplementedError(f"Operating system {globals.CURRENT_OS} is not supported.")
 
 def init():
     print("platswitch init ran")

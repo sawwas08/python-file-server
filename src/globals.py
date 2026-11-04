@@ -29,6 +29,8 @@ CURRENT_OS = None
 
 CONNECTED_DRIVES = []
 
+LEGACY_PATH_DATA_DIR = None # for windows it should be a drive letter path, for linux this should be a path object for a drive label symbolic link, which is resolved when dir is referenced
+
 class SqliteTypes(Enum): # Data type meant to contstrain a string type parameter field to one of five valid strings 
     Null = "NULL"
     Int = "INTEGER"

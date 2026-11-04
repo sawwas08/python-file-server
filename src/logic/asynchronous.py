@@ -10,8 +10,6 @@ if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 import globals
 
-from platforms import windows
-
 def startElevatedWorker():
     worker_thread = threading.Thread(target=windows.WorkerElevated, args=(globals.QUE_WORKER_ELEVATED,), daemon=True)
     worker_thread.start()
