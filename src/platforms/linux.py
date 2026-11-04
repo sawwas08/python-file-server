@@ -13,24 +13,24 @@ def isAdmin():
 # endregion
 # region Windows Exceptions
 def createPartitionHelperProcess():
-    return
+    print("This is a Windows feature, the current OS is Linux.")
 def tryKillHelper(p):
-    return
+    print("This is a Windows feature, the current OS is Linux.")
 def pipeIsConnected(p):
-    return
+    print("This is a Windows feature, the current OS is Linux.")
 def pipe_json(h, message=None, buffer_size=64 * 1024):
-    return
+    print("This is a Windows feature, the current OS is Linux.")
 def testSubprocessRun():
-    return
+    print("This is a Windows feature, the current OS is Linux.")
 def WorkerElevated(queue):
-    return
+    print("This is a Windows feature, the current OS is Linux.")
 def startRemoteAdmin():
-    return
+    print("This is a Windows feature, the current OS is Linux.")
 def connect_pipe(pipe_name):
-    return
+    print("This is a Windows feature, the current OS is Linux.")
 def pipeIsConnected(pipeHandle):
-    return
+    print("This is a Windows feature, the current OS is Linux.")
 def attachPipe():
-    return
+    print("This is a Windows feature, the current OS is Linux.")
 # endregion
 # region Mac Exceptions
