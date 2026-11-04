@@ -82,7 +82,7 @@ def startInputHandling(): #
             #result = windows.pipe_json(globals.PROC_ELEVATED_PY, {"signal": "lstvol"})
             drives.getConnectedDrives()
             print(globals.CONNECTED_DRIVES)
-            print(*[str(obj) for obj in globals.CONNECTED_DRIVES], sep=', ')
+            
         elif uInput == "init":
             print("TODO: first time init procedure here")
         elif uInput == "platinit":
