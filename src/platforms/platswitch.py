@@ -15,13 +15,14 @@ elif globals.CURRENT_OS == "darwin":
 else:
     raise NotImplementedError(f"Operating system {globals.CURRENT_OS} is not supported.")
 
+# region ambiguous
 def init():
     print("platswitch init ran")
     interface.init()
 def isAdmin():
     interface.isAdmin()
-
-# WIN ONLY
+# endregion
+# region WIN ONLY
 def createPartitionHelperProcess():
     interface.createPartitionHelperProcess()
 def tryKillHelper(p):
@@ -42,3 +43,7 @@ def pipeIsConnected(pipeHandle):
     interface.pipeIsConnected(pipeHandle)
 def attachPipe():
     interface.attachPipe()
+# endregion
+#region LINUX ONLY
+
+#endregion

@@ -229,3 +229,11 @@ def init():
     print("platswitch function ran on windows.py")
     startRemoteAdmin()
     attachPipe()
+
+# endregion
+# region Linux Exceptions
+
+# endregion
+# region Max Exceptions
+
+# endregion
