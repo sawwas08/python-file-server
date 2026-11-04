@@ -10,9 +10,9 @@ if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 import globals
 
-def startElevatedWorker():
-    worker_thread = threading.Thread(target=windows.WorkerElevated, args=(globals.QUE_WORKER_ELEVATED,), daemon=True)
-    worker_thread.start()
+#def startElevatedWorker():
+#    worker_thread = threading.Thread(target=windows.WorkerElevated, args=(globals.QUE_WORKER_ELEVATED,), daemon=True)
+#    worker_thread.start()
 
 def killElevatedWorker():
     globals.QUE_WORKER_ELEVATED.put(None) # send kys task to elevated worker

@@ -10,7 +10,6 @@ from logic import asynchronous
 from backend import env
 from backend import sqlite
 from backend import drives
-from platforms import windows
 from logic import indexing
 from pathlib import Path
 from dotenv import load_dotenv
@@ -54,7 +53,7 @@ def startInputHandling(): #
         activeFlags.append("showhelperconsole"); globals.FLAG_SHOW_HELPER_CONSOLE = 1
     if args.partition:
         activeFlags.append("partition")
-        windows.createPartitionHelperProcess()
+        platswitch.createPartitionHelperProcess()
     if len(activeFlags) > 0:
         print("process started with flags:\n", activeFlags)
     else:
@@ -91,13 +90,13 @@ def startInputHandling(): #
         elif uInput == "os":
             print("Current operating system is: ", globals.CURRENT_OS)
         elif uInput == "partitioner":
-            windows.createPartitionHelperProcess()
+            platswitch.createPartitionHelperProcess()
         elif uInput == "test":
             sqlite.deleteRecordSingle(schema.sharedkeys(id=2))
         elif uInput == "killpart":
-            windows.tryKillHelper(globals.PROC_ELEVATED_PY)
+            platswitch.tryKillHelper(globals.PROC_ELEVATED_PY)
         elif uInput == "pipestatus":
-            result = windows.pipeIsConnected(globals.PROC_ELEVATED_PY)
+            result = platswitch.pipeIsConnected(globals.PROC_ELEVATED_PY)
             if result == True:
                 print("Pipe connected")
             else:

@@ -11,7 +11,6 @@ from backend import drives
 from logic import indexing
 from logic import asynchronous
 from platforms import platswitch
-from platforms import windows
 
 def main():
     print("Main called")

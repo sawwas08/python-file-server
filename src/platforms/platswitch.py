@@ -18,3 +18,11 @@ def init():
     print("platswitch init ran")
     interface.init()
 
+def createPartitionHelperProcess():
+    interface.createPartitionHelperProcess()
+
+def tryKillHelper(p):
+    interface.tryKillHelper(p)
+
+def pipeIsConnected(p):
+    interface.pipeIsConnected(p)

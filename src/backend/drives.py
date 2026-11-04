@@ -20,8 +20,9 @@ def getConnectedDrives(): # put the code into a function so it can be ran from m
     elif globals.CONNECTED_DRIVES == "linux":
         labelDir = Path("/dev/disk/by-label")
         if labelDir.is_dir() and not any(labelDir.iterdir()):
-            print("Drive labels directory is empty or does not exist")
-        connectedDrives = list(labeldir.iterdir())
+            print("Drive labels directory is empty")
+            return
+        connectedDrives = list(labelDir.iterdir())
         print(connectedDrives)
 
 
