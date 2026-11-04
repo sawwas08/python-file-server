@@ -17,7 +17,7 @@ def getConnectedDrives(): # put the code into a function so it can be ran from m
         globals.CONNECTED_DRIVES.clear() # clear once before the loop so it populates correctly
         for drive in connectedDrives: # instead of overwriting global value, clear and rewrite the new detected drives into global var as a pathlib Path object ("C://" -> WindowsPath('C:/'))
             globals.CONNECTED_DRIVES.append(Path(drive)) # os.listdrives returns strings, so each string is turned into pathlib object
-    elif globals.CONNECTED_DRIVES == "linux":
+    elif globals.CURRENT_OS == "linux":
         labelDir = Path("/dev/disk/by-label")
         if labelDir.is_dir() and not any(labelDir.iterdir()):
             print("Drive labels directory is empty")
