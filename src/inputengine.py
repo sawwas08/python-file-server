@@ -99,7 +99,7 @@ def startInputHandling(): #
             result = platswitch.pipeIsConnected(globals.PROC_ELEVATED_PY)
             if result == True:
                 print("Pipe connected")
-            else:
+            elif result == False:
                 print("Pipe not connected")
         else: # if no commands matched
             print("ERROR: command unknown")
