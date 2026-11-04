@@ -1,6 +1,7 @@
 # when win and lin support are here, this file is a wrapper to define universal functins depending on current platform type
 import sys
 import globals
+import queue
 
 globals.CURRENT_OS = sys.platform # Darwin == MacOS
 
@@ -17,12 +18,27 @@ else:
 def init():
     print("platswitch init ran")
     interface.init()
+def isAdmin():
+    interface.isAdmin()
 
+# WIN ONLY
 def createPartitionHelperProcess():
     interface.createPartitionHelperProcess()
-
 def tryKillHelper(p):
     interface.tryKillHelper(p)
-
 def pipeIsConnected(p):
     interface.pipeIsConnected(p)
+def pipe_json(h, message=None, buffer_size=64 * 1024):
+    interface.pipe_json(h, message=None, buffer_size=64 * 1024)
+def testSubprocessRun():
+    interface.testSubprocessRun()
+def WorkerElevated(queue):
+    interface.WorkerElevated(queue)
+def startRemoteAdmin():
+    interface.startRemoteAdmin()
+def connect_pipe(pipe_name):
+    interface.connect_pipe(pipe_name)
+def pipeIsConnected(pipeHandle):
+    interface.pipeIsConnected(pipeHandle)
+def attachPipe():
+    interface.attachPipe()

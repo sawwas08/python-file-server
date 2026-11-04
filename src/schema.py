@@ -59,6 +59,8 @@ class users_partitions(SqliteRow):
 
 # region Schema
 def init(): # call only when database is being setup for the first time
+    print("CREATING DATABASE FILE AT: ", globals.PATH_MAIN_DB)
+    globals.PATH_DBDIR.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(globals.PATH_MAIN_DB)
     conn.execute("BEGIN IMMEDIATE")
     sqlSchema = """
